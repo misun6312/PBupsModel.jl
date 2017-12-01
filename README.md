@@ -48,6 +48,18 @@ params = [sigma_a, sigma_s, sigma_i, lam, B, bias, phi, tau_phi, lapse]
 # Compute Loglikelihood value
 LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
 
+# Compute Loglikelihood value of many trials
+ntrials = 1000
+LLs = SharedArray(Float64, ntrials)
+LL_total = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
+
+# Compute Gradients 
+LL, LLgrad = ComputeGrad_par(params, ratdata["rawdata"], ntrials)
+
+# Compute Hessian Matrix 
+LL, LLgrad, LLhess = ComputeHess_par(params, ratdata["rawdata"], ntrials)
+
+
 ```
 
 ## Testing

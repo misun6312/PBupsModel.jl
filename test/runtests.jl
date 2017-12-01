@@ -1,11 +1,11 @@
 # compute models in parallel: multiprocess
-addprocs(Sys.CPU_CORES) # add a worker process per core
-print_with_color(:white, "Setup:\n")
-println("  > Using $(nprocs()-1) worker processes")
+# addprocs(Sys.CPU_CORES) # add a worker process per core
+# print_with_color(:white, "Setup:\n")
+# println("  > Using $(nprocs()-1) worker processes")
 
-using PBupsModel
-using Base.Test
-using MAT
+# @everywhere using PBupsModel
+# @everywhere using Base.Test
+# @everywhere using MAT
 
 dt = 0.02
 

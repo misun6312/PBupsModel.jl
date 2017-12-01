@@ -3,9 +3,9 @@
 # print_with_color(:white, "Setup:\n")
 # println("  > Using $(nprocs()-1) worker processes")
 
-# @everywhere using PBupsModel
-# @everywhere using Base.Test
-# @everywhere using MAT
+using PBupsModel
+using Base.Test
+using MAT
 
 dt = 0.02
 

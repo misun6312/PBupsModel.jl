@@ -1,19 +1,3 @@
-
-n_core = nprocs()-1#2
-if nworkers() < n_core
-    addprocs(n_core-nworkers(); exeflags="--check-bounds=yes")
-end
-@assert nprocs() > n_core
-@assert nworkers() >= n_core
-
-println(workers())
-
-# @everywhere using ForwardDiff
-# @everywhere using DiffBase
-
-# @everywhere const dt = 0.02;
-
-
 function ComputeLL(LLs::SharedArray{Float64,1}, params::Vector, ratdata, ntrials::Int)
     LL = 0.
 

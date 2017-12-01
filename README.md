@@ -18,6 +18,7 @@ Julia version 0.4 or higher is required (install instructions [here][version]).
 left click times on trial and the subject's decision on trial, and duration of trial.
 - `LogLikelihood`: computes the log likelihood according to Bing's model, and returns log likelihood for single trial.
 
+```
 params is a vector whose elements, in order, are
     sigma_a    square root of accumulator variance per unit time sqrt(click units^2 per second)
     sigma_s    standard deviation introduced with each click (will get scaled by click adaptation)
@@ -28,6 +29,7 @@ params is a vector whose elements, in order, are
     phi        click adaptation/facilitation multiplication parameter
     tau_phi    time constant for recovery from click adaptation (sec)
     lapse      2*lapse fraction of trials are decided randomly
+```
 
 - `ComputeLL`: computes the log likelihood for many trials and returns the sum of log likelihood.
 - `ComputeGrad`: returns the gradients.

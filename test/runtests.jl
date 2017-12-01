@@ -7,10 +7,11 @@ using PBupsModel
 using Base.Test
 using MAT
 
-dt = 0.02
 
 # read test data file
 ratdata = matread("data/testdata.mat")
+
+dt = 0.02
 
 # using TrialData load trial data
 RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata["rawdata"], 1)
@@ -32,3 +33,11 @@ LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
 
 # write your own tests here
 @test (LL - -0.9972) < 0.0001
+
+
+# test2
+
+ntrials = 40
+LLs = SharedArray(Float64, ntrials)
+ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
+

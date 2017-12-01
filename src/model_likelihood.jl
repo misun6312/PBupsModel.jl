@@ -1,6 +1,3 @@
-using ForwardDiff
-import Base.convert
-
 # Global variables
 const epsilon = 10.0^(-10);
 const dx = 0.25;

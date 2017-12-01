@@ -24,8 +24,8 @@ export
 
 # all_trials
     ComputeLL,
-    ComputeGrad_par,
-    ComputeHess_par,
+    ComputeGrad,
+    ComputeHess,
     Likely_all_trials
 
 # optimization

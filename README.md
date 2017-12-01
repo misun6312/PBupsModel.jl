@@ -1,9 +1,6 @@
 # PBupsModel
 
-The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation:
-
-- `TrialData`: reads Data file in format of Poisson Clicks task. It includes the right and left click times on trial and the subject's decision on trial, and duration of trial.
-- `LogLikelihood`: computes the logliklihood of each trial using Bing's model (Brunton et al. 2013 Science) (http://brodylab.org/publications-2/brunton-et-al-2013).
+The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation ([Brunton et al. 2013 Science][Bing]).
 
 ## Installation
 
@@ -16,6 +13,25 @@ Pkg.clone("https://github.com/misun6312/PBupsModel.git")
 Julia version 0.4 or higher is required (install instructions [here][version]).
 
 ## Usage
+
+- `TrialData`: reads Data file in format of Poisson Clicks task. It includes the right and 
+left click times on trial and the subject's decision on trial, and duration of trial.
+- `LogLikelihood`: computes the log likelihood according to Bing's model, and returns log likelihood for single trial.
+
+params is a vector whose elements, in order, are
+    sigma_a    square root of accumulator variance per unit time sqrt(click units^2 per second)
+    sigma_s    standard deviation introduced with each click (will get scaled by click adaptation)
+    sigma_i    square root of initial accumulator variance sqrt(click units^2)
+    lambda     1/accumulator time constant (sec^-1). Positive means unstable, neg means stable
+    B          sticky bound height (click units)
+    bias       where the decision boundary lies (click units)
+    phi        click adaptation/facilitation multiplication parameter
+    tau_phi    time constant for recovery from click adaptation (sec)
+    lapse      2*lapse fraction of trials are decided randomly
+
+- `ComputeLL`: computes the log likelihood for many trials and returns the sum of log likelihood.
+- `ComputeGrad`: returns the gradients.
+- `ComputeHess`: returns hessian matrix at given parameter point.
 
 ## Example
 
@@ -35,10 +51,6 @@ RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata["rawdata"]
 
 Nsteps = Int(ceil(maxT/dt))
 
-# sigma_a = rand()*4.; sigma_s = rand()*4.; sigma_i = rand()*30.;
-# lam = randn()*0.4; B = rand()*12.+5.; bias = randn();
-# phi = rand()*1.39+0.01; tau_phi = 0.695*rand()+0.005; lapse = rand();
-
 # known parameter set
 sigma_a = 1; sigma_s = 0.1; sigma_i = 0.2; 
 lam = -0.5; B = 6.1; bias = 0.1; 
@@ -54,10 +66,10 @@ LLs = SharedArray(Float64, ntrials)
 LL_total = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
 
 # Compute Gradients 
-LL, LLgrad = ComputeGrad_par(params, ratdata["rawdata"], ntrials)
+LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
 
 # Compute Hessian Matrix 
-LL, LLgrad, LLhess = ComputeHess_par(params, ratdata["rawdata"], ntrials)
+LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
 
 
 ```
@@ -69,3 +81,4 @@ In a Julia session, run `Pkg.test("PBupsModel")`.
 
 [unregistered]:http://docs.julialang.org/en/release-0.4/manual/packages/#installing-unregistered-packages
 [version]:http://julialang.org/downloads/platform.html
+[Bing]:http://brodylab.org/publications-2/brunton-et-al-2013

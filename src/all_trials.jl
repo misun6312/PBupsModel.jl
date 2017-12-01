@@ -12,7 +12,7 @@ function ComputeLL(LLs::SharedArray{Float64,1}, params::Vector, ratdata, ntrials
     return LL 
 end
 
-function ComputeGrad_par{T}(params::Vector{T}, ratdata, ntrials::Int)
+function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int)
     LL        = 0.
     LLgrad    = zeros(T,length(params))
     
@@ -38,7 +38,7 @@ function ComputeGrad_par{T}(params::Vector{T}, ratdata, ntrials::Int)
     return LL, LLgrad
 end
 
-function ComputeHess_par{T}(params::Vector{T}, ratdata, ntrials::Int)
+function ComputeHess{T}(params::Vector{T}, ratdata, ntrials::Int)
     LL        = 0.
     LLgrad    = zeros(T,length(params))
     LLhess    = zeros(T,length(params),length(params))

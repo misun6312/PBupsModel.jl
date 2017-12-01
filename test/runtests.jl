@@ -52,11 +52,11 @@ LL2 = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
 @test (LL2 - 9.0591) < 0.0001
 
 ###### test3 : Compute Gradients of 40 trials
-LL, LLgrad = ComputeGrad_par(params, ratdata["rawdata"], ntrials)
+LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
 print(LLgrad)
 
 ###### test4 : Compute Hessian Matrix of 40 trials
-LL, LLgrad, LLhess = ComputeHess_par(params, ratdata["rawdata"], ntrials)
+LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
 print(LLhess)
 
 

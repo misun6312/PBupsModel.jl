@@ -67,7 +67,7 @@ function ComputeHess{T}(params::Vector{T}, ratdata, ntrials::Int)
 end
 
 
-function Likely_all_trials{T}(LL::AbstractArray{T,1},params::Vector, ratdata, ntrials::Int)     
+function TrialsLikelihood{T}(LL::AbstractArray{T,1},params::Vector, ratdata, ntrials::Int)     
     for i in 1:ntrials
         RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
         Nsteps = Int(ceil(maxT/dt))

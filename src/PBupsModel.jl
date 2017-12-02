@@ -11,13 +11,16 @@ import Base.convert
 
 using MAT
 using ForwardDiff
+using Optim
 import ForwardDiff.DiffBase
 # using DiffBase
 
 export 
     
 # data_handle
+    LoadData,
     TrialData,
+    WriteData,
 
 # model_likelihood 
     LogLikelihood, 
@@ -26,13 +29,16 @@ export
     ComputeLL,
     ComputeGrad,
     ComputeHess,
-    Likely_all_trials
+    TrialsLikelihood,
 
 # optimization
-
+    InitParams,
+    ModelFitting,
+    FitSummary
 
 include("data_handle.jl")
 include("model_likelihood.jl")
 include("all_trials.jl")
+include("model_optimization.jl")
 
 end # module

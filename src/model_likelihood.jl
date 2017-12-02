@@ -159,9 +159,10 @@ Returns the log of the probability that the agent chose Right.
 """
 
 function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::Vector, Nsteps::Int)
-    sigma_a = params[1]; sigma_s = params[2]; sigma_i = params[3];
-    lambda = params[4]; B = params[5]; bias = params[6];
-    phi = params[7]; tau_phi = params[8]; lapse = params[9]
+    lambda = params[1];
+    sigma_a = params[2]; sigma_s = params[3]; sigma_i = params[4];
+    B = params[5]; phi = params[6]; tau_phi = params[7]; 
+    bias = params[8]; lapse = params[9]
 
     if isempty(RightClickTimes) RightClickTimes = zeros(0) end;
     if isempty(LeftClickTimes ) LeftClickTimes  = zeros(0) end;

@@ -64,15 +64,26 @@ function ModelFitting(params, ratdata, ntrials)
                                 LL_fg!)
 
     tic()
+    # history = optimize(d4, params, l, u, Fminbox(); 
+    #          optimizer = GradientDescent, iterations = 500, linesearch = my_line_search!, optimizer_o = Optim.Options(g_tol = 1e-12,
+    #                                                                         x_tol = 1e-32,
+    #                                                                         f_tol = 1e-16,
+    #                                                                         iterations = 20,
+    #                                                                         store_trace = true,
+    #                                                                         show_trace = true,
+    #                                                                         extended_trace = true
+    #                                                                         ))
     history = optimize(d4, params, l, u, Fminbox(); 
-             optimizer = LBFGS, iterations = 500, linesearch = my_line_search!, optimizer_o = Optim.Options(g_tol = 1e-12,
-                                                                            x_tol = 1e-32,
-                                                                            f_tol = 1e-16,
-                                                                            iterations = 20,
+             optimizer = GradientDescent, optimizer_o = Optim.Options(g_tol = 1e-12,
+                                                                            x_tol = 1e-10,
+                                                                            f_tol = 1e-6,                                                                        iterations = 10,
                                                                             store_trace = true,
-                                                                            show_trace = true,
-                                                                            extended_trace = true
-                                                                            ))
+                                                                            show_trace = false,
+                                                                            extended_trace = true))
+
+
+
+
     fit_time = toc()
     println(history.minimizer)
     println(history)

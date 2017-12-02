@@ -88,17 +88,23 @@ function Fmatrix{T}(F::AbstractArray{T,2},params::Vector, bin_centers)
     c     = params[3];
 
     sigma2_sbin = convert(Float64, sigma2)
+    # println(typeof(sigma2))
+    # println(sigma2)
+    # println("Converted ", sigma2_sbin)
+    # println(typeof(sigma2_sbin))
+
 
     n_sbins = max(70, ceil(10*sqrt(sigma2_sbin)/dx))
 
     F[1,1] = 1;
     F[end,end] = 1;
 
-    swidth = 5*sqrt(sigma2_sbin)
-    sbinsize = swidth/n_sbins;#sbins[2] - sbins[1]
+    swidth = 5.*sqrt(sigma2_sbin)
+
+    sbinsize = swidth/n_sbins #sbins[2] - sbins[1]
     base_sbins    = collect(-swidth:sbinsize:swidth)
 
-    ps       = exp(-base_sbins.^2/(2*sigma2))
+    ps       = exp.(-base_sbins.^2/(2*sigma2)) # exp(Array) -> exp.(x)
     ps       = ps/sum(ps);
 
     sbin_length = length(base_sbins)
@@ -209,10 +215,12 @@ function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::V
     cnt = 0
 
     Fi = zeros(typeof(sigma_i),length(bin_centers),length(bin_centers))
+    # println("here")
     Fmatrix(Fi,[sigma_i, 0., 0.0], bin_centers)
     a = Fi*a0;
 
     F0 = zeros(typeof(sigma_a),length(bin_centers),length(bin_centers))
+    # println("here2")
     Fmatrix(F0,[sigma_a*dt, lambda, 0.0], bin_centers)
     for i in 2:Nsteps
         c_eff_tot = 0.

@@ -37,7 +37,7 @@ function ModelFitting(params, ratdata, ntrials)
         return ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
     end
 
-    function LL_g!{T}(params::Vector{T}, grads::Vector{T})
+    function LL_g!{T}(grads::Vector{T}, params::Vector{T})
         LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
         for i=1:length(params)
             grads[i] = LLgrad[i]
@@ -59,9 +59,8 @@ function ModelFitting(params, ratdata, ntrials)
                       mayterminate, c1, rhohi, rholo, iterations)
     end
 
-    d4 = OnceDifferentiable(LL_f,
-                                LL_g!,
-                                LL_fg!)
+    d4 = OnceDifferentiable(LL_f,LL_g!,params)
+                                # LL_fg!)
 
     tic()
     # history = optimize(d4, params, l, u, Fminbox(); 
@@ -78,7 +77,7 @@ function ModelFitting(params, ratdata, ntrials)
                                                                             x_tol = 1e-10,
                                                                             f_tol = 1e-6,                                                                        iterations = 10,
                                                                             store_trace = true,
-                                                                            show_trace = false,
+                                                                            show_trace = true,
                                                                             extended_trace = true))
 
 

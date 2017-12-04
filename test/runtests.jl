@@ -45,23 +45,23 @@ LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
 # write your own tests here
 @test (LL - -0.9972) < 0.0001
 
-###### test2 : Compute Logliklihood of 40 trials
+# ###### test2 : Compute Logliklihood of 40 trials
 ntrials = 40
 LLs = SharedArray(Float64, ntrials)
 LL2 = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
 
 @test (LL2 - 9.0591) < 0.0001
 
-# ###### test3 : Compute Gradients of 40 trials
+# # ###### test3 : Compute Gradients of 40 trials
 LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
 print(LLgrad)
 
-###### test4 : Compute Hessian Matrix of 40 trials
+# ###### test4 : Compute Hessian Matrix of 40 trials
 LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
 print(LLhess)
 
 ###### test5 : Model Optimization
 # init_params = InitParams()
-# result = ModelFitting(params, ratdata, ntrials)
+result = ModelFitting(params, ratdata, ntrials)
 # FitSummary(mpath, fname, result)
 

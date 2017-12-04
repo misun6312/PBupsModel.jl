@@ -89,6 +89,7 @@ function Fmatrix{T}(F::AbstractArray{T,2},params::Vector, bin_centers)
 
     sigma2_sbin = convert(Float64, sigma2)
     # println(typeof(sigma2))
+    # println(size(sigma2))
     # println(sigma2)
     # println("Converted ", sigma2_sbin)
     # println(typeof(sigma2_sbin))

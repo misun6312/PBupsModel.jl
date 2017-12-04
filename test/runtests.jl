@@ -1,8 +1,8 @@
 # compute models in parallel: multiprocess
 
-# addprocs(Sys.CPU_CORES) # add a worker process per core
-# print_with_color(:white, "Setup:\n")
-# println("  > Using $(nprocs()-1) worker processes")
+addprocs(Sys.CPU_CORES) # add a worker process per core
+print_with_color(:white, "Setup:\n")
+println("  > Using $(nprocs()-1) worker processes")
 n_core = nprocs()-1#2
 
 if nworkers() < n_core
@@ -61,7 +61,7 @@ LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
 print(LLhess)
 
 ###### test5 : Model Optimization
-# init_params = InitParams()
-result = ModelFitting(params, ratdata, ntrials)
-# FitSummary(mpath, fname, result)
+init_params = InitParams()
+result = ModelFitting(init_params, ratdata, ntrials)
+FitSummary(mpath, fname, result)
 

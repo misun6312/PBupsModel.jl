@@ -105,7 +105,7 @@ function Fmatrix{T}(F::AbstractArray{T,2},params::Vector, bin_centers)
     sbinsize = swidth/n_sbins #sbins[2] - sbins[1]
     base_sbins    = collect(-swidth:sbinsize:swidth)
 
-    ps       = exp.(-base_sbins.^2/(2*sigma2)) # exp(Array) -> exp.(x)
+    ps       = exp(-base_sbins.^2/(2*sigma2)) # exp(Array) -> exp.(x)
     ps       = ps/sum(ps);
 
     sbin_length = length(base_sbins)

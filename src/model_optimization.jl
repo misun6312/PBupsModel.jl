@@ -37,6 +37,7 @@ function ModelFitting(params, ratdata, ntrials)
         return ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
     end
 
+    # updated for julia v0.6 (in-place order)
     function LL_g!{T}(grads::Vector{T}, params::Vector{T})
         LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
         for i=1:length(params)
@@ -73,7 +74,7 @@ function ModelFitting(params, ratdata, ntrials)
     #                                                                         extended_trace = true
     #                                                                         ))
     history = optimize(d4, params, l, u, Fminbox(); 
-             optimizer = GradientDescent, optimizer_o = Optim.Options(g_tol = 1e-12,
+             optimizer = LBFGS, optimizer_o = Optim.Options(g_tol = 1e-12,
                                                                             x_tol = 1e-10,
                                                                             f_tol = 1e-6,                                                                        iterations = 10,
                                                                             store_trace = true,

@@ -17,7 +17,10 @@ Julia version 0.6 is required (install instructions [here][version]).
 - `TrialData`: reads Data file in format of Poisson Clicks task. It includes the right and 
 left click times on trial and the subject's decision on trial, and duration of trial.
 ```
-The data should have following 4 fields 
+We accept data file in MATLAB `.mat` format (Both in the older v5/v6/v7 format, as well as the newer v7.3 format. This is supported by [MAT.jl](https://github.com/simonster/MAT.jl) package.)
+
+
+The data should have following 4 fields for each trial
 	rightbups	Click times on the right 	e.g. [0, 0.0639, 0.0881, 0.0920, 0.1277, 0.1478, 0.1786, 0.1894, 0.2180, 0.2464]
 	leftbups	Click times on the left		e.g. [0, 0.3225]
 	pokedR		Whether the subject responded left or right (0 -> left, 1 -> right) e.g. 1 

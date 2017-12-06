@@ -18,10 +18,10 @@ Julia version 0.6 is required (install instructions [here][version]).
 left click times on trial and the subject's decision on trial, and duration of trial.
 ```
 The data should have following 4 fields 
-	rightbups	Click times on the right			e.g.  [0    0.0639    0.0881    0.0920    0.1277  0.1478    0.1786    0.1894    0.2180    0.2464]
-	leftbups	Click times on the left   			e.g.	[0 0.3225]
+	rightbups	Click times on the right 	e.g. [0, 0.0639, 0.0881, 0.0920, 0.1277, 0.1478, 0.1786, 0.1894, 0.2180, 0.2464]
+	leftbups	Click times on the left		e.g. [0, 0.3225]
 	pokedR		Whether the subject responded left or right (0 -> left, 1 -> right) e.g. 1 
-	T  			Total duration of the stimulus	e.g. 0.3619
+	T  		Total duration of the stimulus	e.g. 0.3619
 ```
 
 - `LogLikelihood`: computes the log likelihood according to Bing's model, and returns log likelihood for single trial.

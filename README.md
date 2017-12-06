@@ -10,7 +10,7 @@ As described in the manual, to [install unregistered packages][unregistered], us
 Pkg.clone("https://github.com/misun6312/PBupsModel.git")
 ```
 
-Julia version 0.4 or higher is required (install instructions [here][version]).
+Julia version 0.6 is required (install instructions [here][version]).
 
 ## Usage
 

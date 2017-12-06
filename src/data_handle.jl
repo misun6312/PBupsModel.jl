@@ -39,7 +39,7 @@ end
 
 # Write File
 function WriteFile(mpath, filename, D)
-   saveto_filename = joinpath(mpath,*("julia_out_",filename,".mat"))
+   saveto_filename = joinpath(mpath,*("julia_out_",filename))
    matwrite(saveto_filename, D)
 end
 

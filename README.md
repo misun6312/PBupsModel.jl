@@ -7,7 +7,7 @@ The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian m
 As described in the manual, to [install unregistered packages][unregistered], use `Pkg.clone()` with the repository url:
 
 ```julia
-Pkg.clone("https://github.com/misun6312/PBupsModel.git")
+Pkg.clone("https://github.com/misun6312/PBupsModel.jl.git")
 ```
 
 Julia version 0.6 is required (install instructions [here][version]).

@@ -29,12 +29,14 @@ function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int)
         return LL
     end
 
-    result =  DiffBase.GradientResult(params)
+    do_hess = false
+    LL, LLgrad = GeneralUtils.vgh(WrapperLL, params, do_hess)
+    # result =  DiffBase.GradientResult(params)
     
-    ForwardDiff.gradient!(result, WrapperLL, params);
+    # ForwardDiff.gradient!(result, WrapperLL, params);
     
-    LL     = DiffBase.value(result)
-    LLgrad = DiffBase.gradient(result)
+    # LL     = DiffBase.value(result)
+    # LLgrad = DiffBase.gradient(result)
     return LL, LLgrad
 end
 
@@ -56,13 +58,15 @@ function ComputeHess{T}(params::Vector{T}, ratdata, ntrials::Int)
         return LL
     end
 
-    result =  DiffBase.HessianResult(params)
+    LL, LLgrad, LLhess = GeneralUtils.vgh(WrapperLL, params)
+
+    # result =  DiffBase.HessianResult(params)
     
-    ForwardDiff.hessian!(result, WrapperLL, params);
+    # ForwardDiff.hessian!(result, WrapperLL, params);
     
-    LL     = DiffBase.value(result)
-    LLgrad = DiffBase.gradient(result)
-    LLhess = DiffBase.hessian(result)
+    # LL     = DiffBase.value(result)
+    # LLgrad = DiffBase.gradient(result)
+    # LLhess = DiffBase.hessian(result)
     return LL, LLgrad, LLhess
 end
 

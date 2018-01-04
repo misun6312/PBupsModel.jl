@@ -164,12 +164,11 @@ Takes params
 
 Returns the log of the probability that the agent chose Right.
 """
-
-function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::Vector, Nsteps::Int)
-    lambda = params[1];
-    sigma_a = params[2]; sigma_s = params[3]; sigma_i = params[4];
-    B = params[5]; phi = params[6]; tau_phi = params[7]; 
-    bias = params[8]; lapse = params[9]
+function logProbRight(params::Vector, RightClickTimes::Array{Float64,1}, LeftClickTimes::Array{Float64,1}, Nsteps::Int)
+    sigma_a = params[1]; sigma_s_R = params[2]; sigma_s_L = params[3];
+    sigma_i = params[4]; lambda = params[5]; B = params[6]; bias = params[7];
+    phi = params[8]; tau_phi = params[9]; lapse_R = params[10]; lapse_L = params[11];
+    input_gain_weight = params[12];
 
     if isempty(RightClickTimes) RightClickTimes = zeros(0) end;
     if isempty(LeftClickTimes ) LeftClickTimes  = zeros(0) end;
@@ -198,11 +197,26 @@ function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::V
 
     binN = ceil(Int, B/dx)#Int(ceil(my_B/dx))
     binBias = floor(Int, bias/dx) + binN+1
+    binBias_hp = ceil(Int, bias/dx) + binN+1
+
+    if binBias<1 binBias = 1; end
+    if binBias>binN*2+1 binBias = binN*2+1; end
+
+    if binBias_hp<1 binBias_hp = 1; end
+    if binBias_hp>binN*2+1 binBias_hp = binN*2+1; end
+
     bin_centers = zeros(typeof(dx), binN*2+1)
     make_bins(bin_centers, B, dx, binN)
 
+    # Visualization
+    a_trace = zeros(length(bin_centers), Nsteps)
+    c_trace = zeros(1, Nsteps)
+
+    ## biased lapse rate (lapse_R, lapse_L)
     a0 = zeros(typeof(sigma_a),length(bin_centers))
-    a0[binN+1] = 1-lapse; a0[1] = lapse/2; a0[end] = lapse/2;
+    a0[1] = lapse_L/2;
+    a0[end] = lapse_R/2;
+    a0[binN+1] = 1-lapse_L/2-lapse_R/2;
 
     temp_l = [NumericPair(LeftClickTimes[i],-1) for i=1:length(LeftClickTimes)]
     temp_r = [NumericPair(RightClickTimes[i],1) for i=1:length(RightClickTimes)]
@@ -216,16 +230,20 @@ function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::V
     cnt = 0
 
     Fi = zeros(typeof(sigma_i),length(bin_centers),length(bin_centers))
-    # println("here")
     Fmatrix(Fi,[sigma_i, 0., 0.0], bin_centers)
     a = Fi*a0;
 
+    a_trace[:,1] = a;
+
     F0 = zeros(typeof(sigma_a),length(bin_centers),length(bin_centers))
-    # println("here2")
     Fmatrix(F0,[sigma_a*dt, lambda, 0.0], bin_centers)
     for i in 2:Nsteps
+        net_input = 0.
         c_eff_tot = 0.
         c_eff_net = 0.
+        net_i_input = 0.
+        net_c_input = 0.
+
         if NClicks[i-1]==0
             c_eff_tot = 0.
             c_eff_net = 0.
@@ -234,41 +252,64 @@ function logProbRight(params::Vector, RightClickTimes::Vector, LeftClickTimes::V
             for j in 1:NClicks[i-1]
                 if cnt != 0 || j != 1
                     ici = allbups[cnt+j].x - allbups[cnt+j-1].x
+
                     c_eff = 1 + (c_eff*phi - 1)*exp(-ici/tau_phi)
                     c_eff_tot = c_eff_tot + c_eff
                     c_eff_net = c_eff_net + c_eff*allbups[cnt+j].y
+
+                    ## (input_gain_weight) 0 to 1 : 0-left, 1-right
+                    net_c_input = (c_eff_tot+c_eff_net)/2 # right
+                    net_i_input = c_eff_tot-net_c_input # left
+
+                    net_input = 2*input_gain_weight*net_c_input - 2*(1-input_gain_weight)*net_i_input
                 elseif cnt==0 && j==1
                     ici = 0.
-                    c_eff = 1  + (c_eff*phi - 1)*exp(-ici/tau_phi)
+                    c_eff = 1 + (c_eff*phi - 1)*exp(-ici/tau_phi)
 
                     c_eff_tot = c_eff_tot + c_eff
                     c_eff_net = c_eff_net + c_eff*allbups[cnt+j].y
+
+                    ## (input_gain_weight) 0 to 1 : 0-left, 1-right 
+                    # 0.5 is neutral 
+                    net_c_input = (c_eff_tot+c_eff_net)/2 # right
+                    net_i_input = c_eff_tot-net_c_input # left
+
+                    net_input = 2*input_gain_weight*net_c_input - 2*(1-input_gain_weight)*net_i_input
                 end
                 if j == NClicks[i-1]
                     cnt = cnt+j
                 end
             end
 
-            net_sigma = sigma_a*dt + (sigma_s*c_eff_tot)/total_rate
+            ## biased params added
+            net_sigma = sigma_a*dt + (sigma_s_R*net_i_input)/total_rate + (sigma_s_L*net_c_input)/total_rate
             F = zeros(typeof(net_sigma),length(bin_centers),length(bin_centers))
-            Fmatrix(F,[net_sigma, lambda, c_eff_net/dt], bin_centers)
+            Fmatrix(F,[net_sigma, lambda, net_input/dt], bin_centers)
             a = F*a
-        end
-    end
-    pright = sum(a[binBias+2:end]) +
-    a[binBias]*((bin_centers[binBias+1] - bias)/dx/2) +
-    a[binBias+1]*(0.5 + (bin_centers[binBias+1] - bias)/dx/2)
 
+        end
+
+        a_trace[:,i] = a
+        c_trace[i] = c_eff*exp(lambda*dt)
+    end
+
+    # likelihood of poking right
+    if binBias == binBias_hp
+      pright = sum(a[binBias+1:end])+a[binBias]/2
+    else
+      pright = sum(a[binBias+2:end]) +
+      a[binBias]*((bin_centers[binBias+1] - bias)/dx/2) +
+      a[binBias+1]*(0.5 + (bin_centers[binBias+1] - bias)/dx/2)
+    end
     if pright-1 < epsilon && pright > 1
         pright = 1
     end
     if pright < epsilon && pright > 0
         pright = 0
     end
-
+    
     return log(pright)
 end
-
 
 function LogLikelihood(params::Vector, RightClickTimes::Vector, LeftClickTimes::Vector, Nsteps::Int, rat_choice::Int)
     if rat_choice > 0

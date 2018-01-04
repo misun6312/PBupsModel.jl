@@ -65,3 +65,13 @@ init_params = InitParams()
 result = ModelFitting(init_params, ratdata, ntrials)
 FitSummary(mpath, fname, result)
 
+# to generalize the model.. 
+# any subset of parameters in 12-param model. 
+# change the model_likelihood.jl
+
+# 9p / 12p (+3 bias params) 
+# 8p / 11p sigma_i = 0
+# 10p (without adaptation parameters)
+
+
+

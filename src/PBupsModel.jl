@@ -12,6 +12,8 @@ import Base.convert
 using MAT
 using ForwardDiff
 using Optim
+using GeneralUtils
+
 import ForwardDiff.DiffBase
 # using DiffBase
 

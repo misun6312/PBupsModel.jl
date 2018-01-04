@@ -10,15 +10,14 @@ function ComputeLL(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x)
         Nsteps = Int(ceil(maxT/dt))
 
         # LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
-        LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice;
-            make_dict(args, x)...)
+        LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice, args, x)
     end
 
     LL = -sum(LLs)
     return LL 
 end
 
-function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int)
+function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int, args, x)
     LL        = 0.
     LLgrad    = zeros(T,length(params))
     

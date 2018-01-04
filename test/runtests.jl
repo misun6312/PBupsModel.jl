@@ -40,30 +40,30 @@ phi = 0.3; tau_phi = 0.1; lapse = 0.05*2;
 
 params = [lam, sigma_a, sigma_s, sigma_i, B, phi, tau_phi, bias, lapse] 
 
-LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+# LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
 
-# write your own tests here
-@test (LL - -0.9972) < 0.0001
+# # write your own tests here
+# @test (LL - -0.9972) < 0.0001
 
-# ###### test2 : Compute Logliklihood of 40 trials
-ntrials = 40
-LLs = SharedArray(Float64, ntrials)
-LL2 = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
+# # ###### test2 : Compute Logliklihood of 40 trials
+# ntrials = 40
+# LLs = SharedArray(Float64, ntrials)
+# LL2 = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
 
-@test (LL2 - 9.0591) < 0.0001
+# @test (LL2 - 9.0591) < 0.0001
 
-# # ###### test3 : Compute Gradients of 40 trials
-LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
-print(LLgrad)
+# # # ###### test3 : Compute Gradients of 40 trials
+# LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
+# print(LLgrad)
 
-# ###### test4 : Compute Hessian Matrix of 40 trials
-LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
-print(LLhess)
+# # ###### test4 : Compute Hessian Matrix of 40 trials
+# LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
+# print(LLhess)
 
-###### test5 : Model Optimization
-init_params = InitParams()
-result = ModelFitting(init_params, ratdata, ntrials)
-FitSummary(mpath, fname, result)
+# ###### test5 : Model Optimization
+# init_params = InitParams()
+# result = ModelFitting(init_params, ratdata, ntrials)
+# FitSummary(mpath, fname, result)
 
 
 # ====================== new test ====================== #
@@ -104,8 +104,8 @@ LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x)
 
 
 
-LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
-print(LLhess)
+# LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
+# print(LLhess)
 
 
 

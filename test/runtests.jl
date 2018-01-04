@@ -65,6 +65,9 @@ init_params = InitParams()
 result = ModelFitting(init_params, ratdata, ntrials)
 FitSummary(mpath, fname, result)
 
+
+# ====================== new test ====================== #
+
 # to generalize the model.. 
 # any subset of parameters in 12-param model. 
 # change the model_likelihood.jl
@@ -72,6 +75,37 @@ FitSummary(mpath, fname, result)
 # 9p / 12p (+3 bias params) 
 # 8p / 11p sigma_i = 0
 # 10p (without adaptation parameters)
+
+# input should be "set of name of parameters", "and their values" 
+# where shall we handle the sigma_s_L .. sigma_s
+# if someone specify sigma_s_L/sigma_s_R,then use them
+# if someone does not specify both sigma_s_L and sigma_s_R, then use one of them for sigma_s
+# if someone does not specify none of sigma_s_L and sigma_s_R, then use default value for sigma_s
+
+# how do we check that each parameter is set or not.
+# compare it with default value... for now
+
+ntrials = 40
+LLs = SharedArray(Float64, ntrials)
+
+# known parameter set
+# sigma_a = 1.; sigma_s = 0.1; sigma_i = 0.2; 
+# lam = -0.5; B = 6.1; bias = 0.1; 
+# phi = 0.3; tau_phi = 0.1; lapse = 0.05*2;
+
+args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
+x = [1., 0.1, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2]
+
+# LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials
+#     ;make_dict(args, x)...)
+LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x)
+
+@test (LL2 - 9.0591) < 0.0001
+
+
+
+LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
+print(LLhess)
 
 
 

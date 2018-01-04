@@ -1,11 +1,17 @@
-function ComputeLL(LLs::SharedArray{Float64,1}, params::Vector, ratdata, ntrials::Int)
+# for using keyword_vgh()
+# change the order of parameters.
+
+function ComputeLL(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x)
+
     LL = 0.
 
     @sync @parallel for i in 1:ntrials
         RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
         Nsteps = Int(ceil(maxT/dt))
 
-        LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+        # LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+        LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice;
+            make_dict(args, x)...)
     end
 
     LL = -sum(LLs)
@@ -31,6 +37,12 @@ function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int)
 
     do_hess = false
     LL, LLgrad = GeneralUtils.vgh(WrapperLL, params, do_hess)
+
+    LL, LLgrad = GeneralUtils.keyword_vgh((;params...) -> WrapperLL(RightClickTimes, LeftClickTimes, Nsteps;params...)
+    ,args, x ,do_hess)
+
+
+
     # result =  DiffBase.GradientResult(params)
     
     # ForwardDiff.gradient!(result, WrapperLL, params);

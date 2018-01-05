@@ -1,7 +1,7 @@
 # for using keyword_vgh()
 # change the order of parameters.
 
-function ComputeLL(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x)
+function ComputeLL{T}(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x::Vector{T})
 
     LL = 0.
 
@@ -10,71 +10,84 @@ function ComputeLL(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x)
         Nsteps = Int(ceil(maxT/dt))
 
         # LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
-        LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice, args, x)
+        LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+                ;make_dict(args, x)...)
     end
 
     LL = -sum(LLs)
     return LL 
 end
 
-function ComputeGrad{T}(params::Vector{T}, ratdata, ntrials::Int, args, x)
+function ComputeGrad{T}(ratdata, ntrials::Int, args, x::Vector{T})
     LL        = 0.
-    LLgrad    = zeros(T,length(params))
+    LLgrad    = zeros(T,length(x))
     
-    function WrapperLL{T}(params::Vector{T})
+    # do we still need wrapper?
+    function WrapperLL(;kwargs...)#(params::Vector{T})
         LL  = 0.
-        LLs = SharedArray(eltype(params), ntrials)#zeros(eltype(params),ntrials)
+        (k,v) = kwargs[1]
+        LLs = SharedArray(typeof(v), ntrials)#zeros(eltype(params),ntrials)
 
         @sync @parallel for i in 1:ntrials
             RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
             Nsteps = Int(ceil(maxT/dt))
-            LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+            LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+                ;kwargs...)#;make_dict(args, x)...)
         end
         LL = -sum(LLs)
         return LL
     end
 
     do_hess = false
-    LL, LLgrad = GeneralUtils.vgh(WrapperLL, params, do_hess)
 
-    LL, LLgrad = GeneralUtils.keyword_vgh((;params...) -> WrapperLL(RightClickTimes, LeftClickTimes, Nsteps;params...)
-    ,args, x ,do_hess)
+    # LL = WrapperLL(;make_dict(args, x)...)
+    # println(LL)
+    LL, LLgrad = GeneralUtils.keyword_vgh((;params...) 
+        -> WrapperLL(;params...), args, x, do_hess)
 
+    # LL, LLgrad = GeneralUtils.keyword_vgh(WrapperLL, args, x ,do_hess)
 
+    # LL, LLgrad = GeneralUtils.vgh(WrapperLL, params, do_hess)
 
-    # result =  DiffBase.GradientResult(params)
-    
+    # result =  DiffBase.GradientResult(params)    
     # ForwardDiff.gradient!(result, WrapperLL, params);
-    
     # LL     = DiffBase.value(result)
     # LLgrad = DiffBase.gradient(result)
     return LL, LLgrad
 end
 
-function ComputeHess{T}(params::Vector{T}, ratdata, ntrials::Int)
+function ComputeHess{T}(ratdata, ntrials::Int, args, x::Vector{T})
     LL        = 0.
-    LLgrad    = zeros(T,length(params))
-    LLhess    = zeros(T,length(params),length(params))
+    LLgrad    = zeros(T,length(x))
+    LLhess    = zeros(T,length(x),length(x))
     
-    function WrapperLL{T}(params::Vector{T})
+    function WrapperLL(;kwargs...)#(params::Vector{T})
         LL  = 0.
-        LLs = SharedArray(eltype(params), ntrials)#zeros(eltype(params),ntrials)
+        (k,v) = kwargs[1]
+        LLs = SharedArray(typeof(v), ntrials)#zeros(eltype(params),ntrials)
 
         @sync @parallel for i in 1:ntrials
             RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
             Nsteps = Int(ceil(maxT/dt))
-            LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+            LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+                ;kwargs...)#;make_dict(args, x)...)
+
         end
         LL = -sum(LLs)
         return LL
     end
 
-    LL, LLgrad, LLhess = GeneralUtils.vgh(WrapperLL, params)
+    do_hess = true
 
-    # result =  DiffBase.HessianResult(params)
-    
+    # LL = WrapperLL(;make_dict(args, x)...)
+    # println(LL)
+    LL, LLgrad, LLhess = GeneralUtils.keyword_vgh((;params...) 
+        -> WrapperLL(;params...), args, x, do_hess)
+
+    # LL, LLgrad, LLhess = GeneralUtils.vgh(WrapperLL, params)
+
+    # result =  DiffBase.HessianResult(params)    
     # ForwardDiff.hessian!(result, WrapperLL, params);
-    
     # LL     = DiffBase.value(result)
     # LLgrad = DiffBase.gradient(result)
     # LLhess = DiffBase.hessian(result)

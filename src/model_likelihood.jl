@@ -342,15 +342,16 @@ function logProbRight(RightClickTimes::Array{Float64,1}, LeftClickTimes::Array{F
     return log(pright)
 end
 
-function LogLikelihood(RightClickTimes::Vector, LeftClickTimes::Vector, Nsteps::Int, rat_choice::Int, args, x)
+function LogLikelihood(RightClickTimes::Vector, LeftClickTimes::Vector, Nsteps::Int, rat_choice::Int
+    ;kwargs...)
     if rat_choice > 0
         # println("Right")
         return logProbRight(RightClickTimes, LeftClickTimes, Nsteps;
-            make_dict(args, x)...)
+            kwargs...)#make_dict(args, x)...)
     elseif rat_choice < 0
         # println("Left")
         return log(1 - exp(logProbRight(RightClickTimes, LeftClickTimes, Nsteps;
-            make_dict(args, x)...)))
+            kwargs...)))#make_dict(args, x)...)))
     end
 end
 

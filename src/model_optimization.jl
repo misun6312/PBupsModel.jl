@@ -99,6 +99,16 @@ function ModelFitting(args, x_init, ratdata, ntrials)
         "lapse_L" => 1.,
         "input_gain_weight" => 1.)
 
+
+    l = zeros(length(args))
+    u = zeros(length(args))
+
+    for i in 1:length(args)
+        l[i] = l_b[args[i]]
+        u[i] = u_b[args[i]] 
+    end
+
+
     function LL_f(x_init::Vector)
         LLs = SharedArray(Float64, ntrials)
         return ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x_init)
@@ -116,8 +126,7 @@ function ModelFitting(args, x_init, ratdata, ntrials)
     function LL_fg!(x_init::Vector, grads)
         LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args, x_init)
 
-## so far..
-        for i=1:length(params)
+        for i=1:length(x_init)
             grads[i] = LLgrad[i]
         end
         return LL
@@ -130,7 +139,7 @@ function ModelFitting(args, x_init, ratdata, ntrials)
                       mayterminate, c1, rhohi, rholo, iterations)
     end
 
-    d4 = OnceDifferentiable(LL_f,LL_g!,params)
+    d4 = OnceDifferentiable(LL_f,LL_g!,x_init)
                                 # LL_fg!)
 
     tic()
@@ -143,7 +152,7 @@ function ModelFitting(args, x_init, ratdata, ntrials)
     #                                                                         show_trace = true,
     #                                                                         extended_trace = true
     #                                                                         ))
-    history = optimize(d4, params, l, u, Fminbox(); 
+    history = optimize(d4, x_init, l, u, Fminbox(); 
              optimizer = LBFGS, optimizer_o = Optim.Options(g_tol = 1e-12,
                                                                             x_tol = 1e-10,
                                                                             f_tol = 1e-6,                                                                        iterations = 10,
@@ -162,10 +171,11 @@ function ModelFitting(args, x_init, ratdata, ntrials)
     # likely_all = zeros(typeof(sigma_i),ntrials)
     x_bf = history.minimizer #.minimum
     # Likely_all_trials(likely_all, x_bf, ratdata["rawdata"], ntrials)
-    LL, LLgrad, LLhess = ComputeHess(x_bf, ratdata["rawdata"], ntrials)
-    
-    Gs = zeros(length(history.trace),length(params))
-    Xs = zeros(length(history.trace),length(params))
+    # LL, LLgrad, LLhess = ComputeHess(x_bf, ratdata["rawdata"], ntrials)
+    LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args, x_bf)
+
+    Gs = zeros(length(history.trace),length(x_init))
+    Xs = zeros(length(history.trace),length(x_init))
     fs = zeros(length(history.trace))
 
     for i=1:length(history.trace)
@@ -175,7 +185,8 @@ function ModelFitting(args, x_init, ratdata, ntrials)
         Xs[i,:] = tt["x"]
     end
 
-    D = Dict([("x_init",params),
+    D = Dict([("x_init",x_init),    
+                ("parameters",args),
                 ("trials",ntrials),
                 ("f",history.minimum), 
                 ("x_converged",history.x_converged),

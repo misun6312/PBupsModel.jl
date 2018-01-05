@@ -135,7 +135,7 @@ FitSummary(mpath, fname, result)
 
 
 # ###### test5 : Model Optimization
-init_params = InitParams(args_12p)
+# init_params = InitParams(args_12p)
 # result = ModelFitting(init_params, ratdata, ntrials)
 # FitSummary(mpath, fname, result)
 

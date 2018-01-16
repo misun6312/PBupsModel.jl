@@ -31,16 +31,19 @@ The data should have following 4 fields for each trial
 - `LogLikelihood`: computes the log likelihood according to Bing's model, and returns log likelihood for single trial.
 
 ```
-params is a vector whose elements, in order, are
-    sigma_a    square root of accumulator variance per unit time sqrt(click units^2 per second)
-    sigma_s    standard deviation introduced with each click (will get scaled by click adaptation)
-    sigma_i    square root of initial accumulator variance sqrt(click units^2)
-    lambda     1/accumulator time constant (sec^-1). Positive means unstable, neg means stable
-    B          sticky bound height (click units)
-    bias       where the decision boundary lies (click units)
-    phi        click adaptation/facilitation multiplication parameter
-    tau_phi    time constant for recovery from click adaptation (sec)
-    lapse      2*lapse fraction of trials are decided randomly
+Model parameters can be accessed by following keywords : 
+    sigma_a     a diffusion constant, parameterizing noise in a. square root of accumulator variance per unit time sqrt(click units^2 per second)
+    sigma_s_R   parameterizing noise when adding evidence from a right pulse. (incoming sensory evidence). standard deviation introduced with each click (will get scaled by click adaptation)
+    sigma_s_L   parameterizing noise when adding evidence from a left pulse. (incoming sensory evidence). standard deviation introduced with each click (will get scaled by click adaptation)
+    sigma_i     square root of initial accumulator variance sqrt (click units^2). initial condition for the dynamical equation at t=0.
+    lambda      1/accumulator time constant (sec^-1). Positive means unstable, neg means stable
+    B           sticky bound height (click units)
+    bias        where the decision boundary lies (click units)
+    phi         click adaptation/facilitation multiplication parameter
+    tau_phi     time constant for recovery from click adaptation (sec)
+    lapse_R     The lapse rate parameterizes the probability of making a random response as right choice. (L->R)
+    lapse_L     The lapse rate parameterizes the probability of making a random response as left choice. (R->L)
+    biased_input unbalanced input gain (sensory neglect)
 ```
 
 - `ComputeLL`: computes the log likelihood for many trials and returns the sum of log likelihood.

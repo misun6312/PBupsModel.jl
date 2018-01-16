@@ -7,6 +7,7 @@ The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian m
 As described in the manual, to [install unregistered packages][unregistered], use `Pkg.clone()` with the repository url:
 
 ```julia
+Pkg.clone("https://github.com/misun6312/GeneralUtils.jl.git")
 Pkg.clone("https://github.com/misun6312/PBupsModel.jl.git")
 ```
 
@@ -64,25 +65,48 @@ RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata["rawdata"]
 
 Nsteps = Int(ceil(maxT/dt))
 
-# known parameter set
-sigma_a = 1; sigma_s = 0.1; sigma_i = 0.2; 
-lam = -0.5; B = 6.1; bias = 0.1; 
-phi = 0.3; tau_phi = 0.1; lapse = 0.05*2;
-params = [sigma_a, sigma_s, sigma_i, lam, B, bias, phi, tau_phi, lapse]
+# known parameter set (9-parameter)
+args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
+x = [1., 0.1, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2]
 
 # Compute Loglikelihood value
-LL = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+LL = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+                ;make_dict(args, x)...)
 
 # Compute Loglikelihood value of many trials
 ntrials = 1000
 LLs = SharedArray(Float64, ntrials)
-LL_total = ComputeLL(LLs, params, ratdata["rawdata"], ntrials)
+LL_total = ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x)
 
 # Compute Gradients 
-LL, LLgrad = ComputeGrad(params, ratdata["rawdata"], ntrials)
+LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args, x)
 
-# Compute Hessian Matrix 
-LL, LLgrad, LLhess = ComputeHess(params, ratdata["rawdata"], ntrials)
+# Compute Gradients 
+LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args, x)
+
+# Model Optimization
+args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
+init_params = InitParams(args)
+result = ModelFitting(args, init_params, ratdata, ntrials)
+FitSummary(mpath, fname, result)
+
+# known parameter set (12-parameter including bias parameters)
+args_12p = ["sigma_a","sigma_s_R","sigma_s_L","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R","lapse_L","input_gain_weight"]
+x_12p = [1., 0.1, 50, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2, 0.2, 0.4]
+
+# Compute Loglikelihood value of many trials
+ntrials = 400
+LLs = SharedArray(Float64, ntrials)
+LL = ComputeLL(LLs, ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LL)
+
+# Compute Gradients 
+LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LLgrad)
+
+# Compute Gradients 
+LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LLhess)
 
 
 ```

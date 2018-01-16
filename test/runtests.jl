@@ -88,55 +88,53 @@ params = [lam, sigma_a, sigma_s, sigma_i, B, phi, tau_phi, bias, lapse]
 ntrials = 40
 LLs = SharedArray(Float64, ntrials)
 
-# known parameter set
-# sigma_a = 1.; sigma_s = 0.1; sigma_i = 0.2; 
-# lam = -0.5; B = 6.1; bias = 0.1; 
-# phi = 0.3; tau_phi = 0.1; lapse = 0.05*2;
+# ===== 9p ===== #
 
-args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
-x = [1., 0.1, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2]
+# # known parameter set
+# args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
+# x = [1., 0.1, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2]
 
-# LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials
-#     ;make_dict(args, x)...)
-LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x)
+# # LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials
+# #     ;make_dict(args, x)...)
+# LL2 = ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x)
 
-@test (LL2 - 9.0591) < 0.0001
+# @test (LL2 - 9.0591) < 0.0001
 
-# ###### test3 : Compute Gradients of 40 trials
-LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args, x)
-print(LLgrad)
+# # ###### test3 : Compute Gradients of 40 trials
+# LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args, x)
+# print(LLgrad)
 
-# ###### test4 : Compute Hessian Matrix of 40 trials
+# # ###### test4 : Compute Hessian Matrix of 40 trials
 # LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args, x)
 # print(LLhess)
 
-# ###### test5 : Model Optimization
-args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
-init_params = InitParams(args)
-result = ModelFitting(args, init_params, ratdata, ntrials)
-FitSummary(mpath, fname, result)
+# # ###### test5 : Model Optimization
+# args = ["sigma_a","sigma_s_R","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R"]
+# init_params = InitParams(args)
+# result = ModelFitting(args, init_params, ratdata, ntrials)
+# FitSummary(mpath, fname, result)
 
 # ===== 12p ===== #
-# args_12p = ["sigma_a","sigma_s_R","sigma_s_L","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R","lapse_L","input_gain_weight"]
-# x_12p = [1., 0.1, 50, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2, 0.2, 0.4]
+args_12p = ["sigma_a","sigma_s_R","sigma_s_L","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R","lapse_L","input_gain_weight"]
+x_12p = [1., 0.1, 50, 0.2, -0.5, 6.1, 0.1, 0.3, 0.1, 0.05*2, 0.2, 0.4]
 
-# ntrials = 40
-# LLs = SharedArray(Float64, ntrials)
-# LL = ComputeLL(LLs, ratdata["rawdata"], ntrials, args_12p, x_12p)
-# print(LL)
+ntrials = 40
+LLs = SharedArray(Float64, ntrials)
+LL = ComputeLL(LLs, ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LL)
 
-# # ###### test3 : Compute Gradients of 40 trials
-# LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args_12p, x_12p)
-# print(LLgrad)
+# ###### test3 : Compute Gradients of 40 trials
+LL, LLgrad = ComputeGrad(ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LLgrad)
 
-# ###### test4 : Compute Hessian Matrix of 40 trials
-# LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args_12p, x_12p)
-# print(LLhess)
+###### test4 : Compute Hessian Matrix of 40 trials
+LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args_12p, x_12p)
+print(LLhess)
 
 
-# ###### test5 : Model Optimization
-# init_params = InitParams(args_12p)
-# result = ModelFitting(init_params, ratdata, ntrials)
-# FitSummary(mpath, fname, result)
+###### test5 : Model Optimization
+init_params = InitParams(args_12p)
+result = ModelFitting(args_12p, init_params, ratdata, ntrials)
+FitSummary(mpath, fname, result)
 
 

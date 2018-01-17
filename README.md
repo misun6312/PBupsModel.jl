@@ -12,7 +12,7 @@ Pkg.clone("https://github.com/misun6312/PBupsModel.jl.git")
 
 Julia version 0.6 is required (install instructions [here][version]).
 
-Our own [GeneralUtils.jl][GU_github] package is required as well. You can install this package in the same way with following command:
+Our own [GeneralUtils.jl][GU_github] package is also required. You can install this package in the same way with following command:
 ```julia
 Pkg.clone("https://github.com/misun6312/GeneralUtils.jl.git")
 ```

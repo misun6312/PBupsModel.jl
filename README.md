@@ -62,22 +62,6 @@ Model parameters can be accessed by following keywords :
 - `FitSummary`: returns the summary of fit results. It will save the fit result file with following fields. 
 
 ```
-    D = Dict([("x_init",x_init),    
-                ("parameters",args),
-                ("trials",ntrials),
-                ("f",history.minimum), 
-                ("x_converged",history.x_converged),
-                ("f_converged",history.f_converged),
-                ("g_converged",history.g_converged),                            
-                ("grad_trace",Gs),
-                ("f_trace",fs),
-                ("x_trace",Xs),                         
-                ("fit_time",fit_time),
-                ("x_bf",history.minimizer),
-                ("myfval", history.minimum),
-                ("hessian", LLhess)
-                ])
-
     x_init      initial point the fitting process has started
     parameters  list of parameters that were used for fitting model
     trials      number of trials

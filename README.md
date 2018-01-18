@@ -55,6 +55,42 @@ Model parameters can be accessed by following keywords :
 - `ComputeGrad`: returns the gradients.
 - `ComputeHess`: returns hessian matrix at given parameter point.
 
+### Model Fitting
+
+- `InitParams`: gets the initial points for model fitting for each parameter. Default mode is random draw for the seed. 
+- `ModelFitting`: fits the model with given initial parameters and data.
+- `FitSummary`: returns the summary of fit results. It will save the fit result file with following fields. 
+
+```
+    D = Dict([("x_init",x_init),    
+                ("parameters",args),
+                ("trials",ntrials),
+                ("f",history.minimum), 
+                ("x_converged",history.x_converged),
+                ("f_converged",history.f_converged),
+                ("g_converged",history.g_converged),                            
+                ("grad_trace",Gs),
+                ("f_trace",fs),
+                ("x_trace",Xs),                         
+                ("fit_time",fit_time),
+                ("x_bf",history.minimizer),
+                ("myfval", history.minimum),
+                ("hessian", LLhess)
+                ])
+
+    x_init      initial point the fitting process has started
+    parameters  list of parameters that were used for fitting model
+    trials      number of trials
+    f, myfval   function value at the end of fitting
+    grad_trace  trace of gradient values for each parameters while fitting iteration
+    f_trace     trace of function values while fitting iteration
+    x_trace     trace of points of each parameters while fitting iteration
+    fit_time    fitting time (sec)
+    x_bf        best-fit parameters
+    hessian     hessian matrix at best-fit point
+
+```
+
 ## Example
 
 The simple example below computes a log likelihood of model with example trial.
@@ -116,7 +152,11 @@ print(LLgrad)
 LL, LLgrad, LLhess = ComputeHess(ratdata["rawdata"], ntrials, args_12p, x_12p)
 print(LLhess)
 
-
+# Model Optimization
+args_12p = ["sigma_a","sigma_s_R","sigma_s_L","sigma_i","lambda","B","bias","phi","tau_phi","lapse_R","lapse_L","input_gain_weight"]
+init_params = InitParams(args_12p)
+result = ModelFitting(args_12p, init_params, ratdata, ntrials)
+FitSummary(mpath, fname, result)
 ```
 
 ## Testing

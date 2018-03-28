@@ -1,6 +1,6 @@
 # PBupsModel
 
-The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation ([Brunton et al. 2013 Science][Bing]).
+The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation ([Brunton et al. 2013 Science][Bing]). This model also includes 4 bias parameters that first introduced in pharmacological FOF inactivation study ([Erlich et al. 2015 eLife][Jeff]).
 
 ## Installation
 
@@ -72,7 +72,6 @@ Model parameters can be accessed by following keywords :
     fit_time    fitting time (sec)
     x_bf        best-fit parameters
     hessian     hessian matrix at best-fit point
-
 ```
 
 ## Example
@@ -151,4 +150,5 @@ In a Julia session, run `Pkg.test("PBupsModel")`.
 [unregistered]:http://docs.julialang.org/en/release-0.4/manual/packages/#installing-unregistered-packages
 [version]:http://julialang.org/downloads/platform.html
 [Bing]:http://brodylab.org/publications-2/brunton-et-al-2013
+[Jeff]:http://brodylab.org/publications-2/erlich-et-al-2015/
 [GU_github]:https://github.com/misun6312/GeneralUtils.jl

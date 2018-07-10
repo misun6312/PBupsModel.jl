@@ -25,10 +25,12 @@ export
     WriteData,
 
 # model_likelihood 
+    logProbRight,
     LogLikelihood, 
 
 # all_trials
     ComputeLL,
+    ComputeLL_bbox,
     ComputeGrad,
     ComputeHess,
     TrialsLikelihood,

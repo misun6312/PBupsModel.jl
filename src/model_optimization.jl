@@ -111,7 +111,9 @@ function ModelFitting(args, x_init, ratdata, ntrials)
 
     function LL_f(x_init::Vector)
         LLs = SharedArray(Float64, ntrials)
-        return ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x_init)
+        # return ComputeLL(LLs, ratdata["rawdata"], ntrials, args, x_init)
+        return ComputeLL(LLs, ratdata["rawdata"], ntrials
+            ;make_dict(args, x_init)...)
     end
 
     # updated for julia v0.6 (in-place order)

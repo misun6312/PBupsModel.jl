@@ -1,8 +1,9 @@
 # for using keyword_vgh()
 # change the order of parameters.
 
-function ComputeLL{T}(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, x::Vector{T})
-
+# function ComputeLL(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int#, args, x::Vector{T})
+function ComputeLL(LLs, ratdata, ntrials::Int#, args, x::Vector{T})
+    ;kwargs...)
     LL = 0.
 
     @sync @parallel for i in 1:ntrials
@@ -11,11 +12,27 @@ function ComputeLL{T}(LLs::SharedArray{Float64,1}, ratdata, ntrials::Int, args, 
 
         # LLs[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
         LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
-                ;make_dict(args, x)...)
+                ;kwargs...)#make_dict(args, x)...)
     end
 
     LL = -sum(LLs)
     return LL 
+end
+
+function ComputeLL_bbox(LLs, ratdata, ntrials::Int#, args, x::Vector{T})
+    ;kwargs...)
+    LL  = 0.
+    (k,v) = kwargs[1]
+    LLs = SharedArray(typeof(v), ntrials)#zeros(eltype(params),ntrials)
+
+    @sync @parallel for i in 1:ntrials
+        RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
+        Nsteps = Int(ceil(maxT/dt))
+        LLs[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+            ;kwargs...)#;make_dict(args, x)...)
+    end
+    LL = -sum(LLs)
+    return LL
 end
 
 function ComputeGrad{T}(ratdata, ntrials::Int, args, x::Vector{T})

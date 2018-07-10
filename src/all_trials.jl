@@ -112,11 +112,13 @@ function ComputeHess{T}(ratdata, ntrials::Int, args, x::Vector{T})
 end
 
 
-function TrialsLikelihood{T}(LL::AbstractArray{T,1},params::Vector, ratdata, ntrials::Int)     
+function TrialsLikelihood{T}(LL::AbstractArray{T,1}, ratdata, ntrials::Int
+     ;kwargs...)     
     for i in 1:ntrials
         RightClickTimes, LeftClickTimes, maxT, rat_choice = TrialData(ratdata, i)
         Nsteps = Int(ceil(maxT/dt))
 
-        LL[i] = LogLikelihood(params, RightClickTimes, LeftClickTimes, Nsteps, rat_choice)
+        LL[i] = LogLikelihood(RightClickTimes, LeftClickTimes, Nsteps, rat_choice
+                            ;kwargs...)
     end
 end

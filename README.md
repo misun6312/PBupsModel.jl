@@ -1,6 +1,6 @@
 # PBupsModel
 
-The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation ([Brunton et al. 2013 Science][Bing]). This model also includes 4 bias parameters that first introduced in pharmacological FOF inactivation study ([Erlich et al. 2015 eLife][Jeff]).
+The `PBupsModel` package currently provides the Likelihood, Gradients, Hessian matrix of Evidence accumulation model for Poisson Clicks Task using Automatic Differentiation. This package was built based on code written by Brunton and Brody ([Brunton et al. 2013 Science][Bing]). This model also includes 4 bias parameters that first introduced in pharmacological FOF inactivation study ([Erlich et al. 2015 eLife][Jeff]).
 
 ## Installation
 
